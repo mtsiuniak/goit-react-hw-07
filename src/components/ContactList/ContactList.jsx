@@ -1,33 +1,24 @@
 import { useSelector } from "react-redux";
+import { selectFilteredContacts } from "../../redux/selectors";
+import { selectIsLoading } from "../../redux/selectors";
 import Contact from "../Contact/Contact";
-import { nanoid } from '@reduxjs/toolkit';
 
 export default function ContactList() {
-  
-  const contacts = useSelector((state) => state.items);
-  const search = useSelector((state) => state.filters.name);
-  // console.log(contacts);
-
-  const filterContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(search.trim().toLowerCase())) 
-  
+  const filteredContacts = useSelector(selectFilteredContacts);
+  const isLoading = useSelector(selectIsLoading);
 
   return (
     <>
-      {contacts.length !== 0 ? (
-        <ul >
-          {filterContacts.map(contact => (
-            <li  key={nanoid()}>
+      {filteredContacts.length === 0 && !isLoading ? (
+        <p>No contacts found</p>
+      ) : (
+        <ul>
+          {filteredContacts.map((contact) => (
+            <li key={contact.id}>
               <Contact data={contact} />
             </li>
           ))}
         </ul>
-      ) : (
-        <p >No contacts yet </p>
-      )}
-
-      {!filterContacts.length && contacts.length !== 0 && (
-        <p >No contacts found </p>
       )}
     </>
   );
